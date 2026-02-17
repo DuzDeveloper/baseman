@@ -219,7 +219,7 @@ export function BlueSkyBirdGame() {
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const backgroundRef = useRef<HTMLImageElement | null>(null);
-  const gameLoopRef = useRef<number>();
+  const gameLoopRef = useRef<number | undefined>(undefined);
   const lastPipeRef = useRef<number>(0);
 
   useEffect(() => {
