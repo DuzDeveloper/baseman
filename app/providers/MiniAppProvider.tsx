@@ -1,48 +1,41 @@
-'use client'
+'use client';
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import sdk from '@farcaster/miniapp-sdk';
+import { createContext, useContext, useEffect, useState } from 'react';
 
-interface MiniAppContextValue {
-  context: any;
+interface MiniAppContextType {
   isReady: boolean;
 }
 
-export const MiniAppContext = createContext<MiniAppContextValue | null>(null);
+const MiniAppContext = createContext<MiniAppContextType | undefined>(undefined);
 
-export function useMiniApp() {
-  const context = useContext(MiniAppContext);
-  if (!context) {
-    throw new Error('useMiniApp must be used within MiniAppProvider');
-  }
-  return context;
-}
-
-export function MiniAppProvider({ children }: { children: ReactNode }) {
-  const [context, setContext] = useState<any>(null);
+export function MiniAppProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const init = async () => {
-      try {
-        // Notificamos a Base inmediatamente
-        await sdk.actions.ready();
-        setIsReady(true);
-
-        // Intentamos obtener el contexto después
-        const ctx = await sdk.context;
-        if (ctx) setContext(ctx);
-      } catch (error) {
-        console.error("Error inicializando SDK:", error);
+    const checkMiniApp = () => {
+      if (typeof window !== 'undefined') {
+        // Check if we're in a MiniApp context
+        const isMiniApp = Boolean(
+          (window as Window & { MiniKit?: unknown }).MiniKit
+        );
         setIsReady(true);
       }
     };
-    init();
+
+    checkMiniApp();
   }, []);
 
   return (
-    <MiniAppContext.Provider value={{ context, isReady }}>
+    <MiniAppContext.Provider value={{ isReady }}>
       {children}
     </MiniAppContext.Provider>
   );
+}
+
+export function useMiniApp() {
+  const context = useContext(MiniAppContext);
+  if (context === undefined) {
+    throw new Error('useMiniApp must be used within a MiniAppProvider');
+  }
+  return context;
 }
