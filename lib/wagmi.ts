@@ -12,12 +12,13 @@ export function getConfig() {
         appName: process.env.NEXT_PUBLIC_PROJECT_NAME || 'Baseman',
         preference: 'smartWalletOnly',
       }),
-      // ⚠️ NO incluir metaMask() — causa el loop de setImmediate/eth_accounts
     ],
     storage: createStorage({
       storage: cookieStorage,
     }),
     ssr: true,
+    // CRÍTICO: Deshabilitar auto-connect para evitar el loop
+    multiInjectedProviderDiscovery: false,
     transports: {
       [base.id]: http(),
     },
