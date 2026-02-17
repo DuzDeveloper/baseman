@@ -15,7 +15,7 @@ export function MiniAppProvider({ children }: { children: React.ReactNode }) {
     const checkMiniApp = () => {
       if (typeof window !== 'undefined') {
         // Check if we're in a MiniApp context
-        const isMiniApp = Boolean(
+        const _isMiniApp = Boolean(
           (window as Window & { MiniKit?: unknown }).MiniKit
         );
         setIsReady(true);
