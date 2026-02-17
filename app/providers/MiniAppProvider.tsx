@@ -1,32 +1,10 @@
-'use client';
-
-import { createContext, useContext, useEffect, useState } from 'react';
-import sdk from '@farcaster/miniapp-sdk';
-
-interface MiniAppContextType {
-  isReady: boolean;
-}
-
-const MiniAppContext = createContext<MiniAppContextType>({ isReady: false });
+// Este archivo ya NO es necesario - toda la lógica está en app/providers.tsx
+// Mantener solo por compatibilidad con imports existentes
 
 export function MiniAppProvider({ children }: { children: React.ReactNode }) {
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    // Llamar ready() inmediatamente — sin esperar context
-    // Esto detiene el loop de setImmediate y marca la app como Ready
-    sdk.actions.ready().finally(() => {
-      setIsReady(true);
-    });
-  }, []);
-
-  return (
-    <MiniAppContext.Provider value={{ isReady }}>
-      {children}
-    </MiniAppContext.Provider>
-  );
+  return <>{children}</>;
 }
 
 export function useMiniApp() {
-  return useContext(MiniAppContext);
+  return { isReady: true };
 }
