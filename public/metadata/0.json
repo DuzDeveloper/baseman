@@ -1,0 +1,15 @@
+{
+  "name": "CULT #0",
+  "description": "Parte de la colección Base Cult NFT",
+  "image": "https://basecultmint.vercel.app/images/0.png",
+  "attributes": [
+    {
+      "trait_type": "Number",
+      "value": "0"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Genesis"
+    }
+  ]
+}

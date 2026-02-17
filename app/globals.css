@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '@coinbase/onchainkit/styles.css';
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+button[data-testid="ockConnectButton"],
+.ock-connect-button {
+  background: linear-gradient(to right, #3b82f6, #0f237c) !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem 1.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.2s !important;
+}
+
+button[data-testid="ockConnectButton"]:hover,
+.ock-connect-button:hover {
+  background: linear-gradient(to right, #2563eb, #1c0a6b) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Cambiar solo el color de fondo */
+button[data-testid="ockConnectButton"] {
+  background-color: #10319e !important; /* Color púrpura */
+}
+
+/* O usar un gradiente diferente */
+button[data-testid="ockConnectButton"] {
+  background: linear-gradient(135deg, #667eea 0%, #1b18ac 100%) !important;
+}

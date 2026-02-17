@@ -1,0 +1,24 @@
+{
+  "name": "Base Cult NFT #{{TOKEN_ID}}",
+  "description": "Un NFT exclusivo de la colección Base Cult. Gratis para mintear, único en su especie.",
+  "image": "https://tu-dominio.com/images/{{TOKEN_ID}}.png",
+  "external_url": "https://tu-dominio.com",
+  "attributes": [
+    {
+      "trait_type": "Generation",
+      "value": "Genesis"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Base Cult"
+    },
+    {
+      "trait_type": "Minted On",
+      "value": "Base Sepolia"
+    }
+  ]
+}
