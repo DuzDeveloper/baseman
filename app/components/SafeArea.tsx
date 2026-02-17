@@ -1,33 +1,22 @@
-'use client'
+'use client';
 
-import { useMiniApp } from '@/app/providers/MiniAppProvider';
-import { ReactNode } from 'react';
+import { useMiniApp } from '../providers/MiniAppProvider';
 
 interface SafeAreaProps {
-  children: ReactNode;
+  children: React.ReactNode;
   className?: string;
 }
 
 export function SafeArea({ children, className }: SafeAreaProps) {
-  const { context, isReady } = useMiniApp();
+  const { isReady } = useMiniApp();
 
   // Only apply insets when running inside a mini app
-  if (!isReady || !context) {
+  if (!isReady) {
     return <div className={className}>{children}</div>;
   }
 
-  const insets = context.client?.safeAreaInsets;
-
   return (
-    <div
-      className={className}
-      style={{
-        paddingTop: insets?.top ?? 0,
-        paddingBottom: insets?.bottom ?? 0,
-        paddingLeft: insets?.left ?? 0,
-        paddingRight: insets?.right ?? 0,
-      }}
-    >
+    <div className={`safe-area ${className || ''}`}>
       {children}
     </div>
   );
