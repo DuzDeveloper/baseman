@@ -16,7 +16,6 @@ export function RootProvider({ children }: { children: ReactNode }) {
         },
         wallet: {
           display: "modal",
-          preference: "all",
         },
       }}
       miniKit={{
