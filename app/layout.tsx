@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     ],
   },
   other: {
-    'base:app_id': '698609178dcaa0daf5755fb6',
+    'base:app_id': '6993d0127ca07f5750bbdc46',
     'fc:miniapp': JSON.stringify({
       version: minikitConfig.miniapp.version,
       imageUrl: minikitConfig.miniapp.heroImageUrl || minikitConfig.miniapp.iconUrl,
