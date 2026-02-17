@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { GAME_ABI } from '@/lib/contract-abi';
 import { ConnectWallet } from '@coinbase/onchainkit/wallet';
-import Image from 'next/image';
+import NextImage from 'next/image';
 
 const GAME_CONTRACT = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`;
 
@@ -505,7 +505,7 @@ export function BlueSkyBirdGame() {
               
               {/* ========== IMAGEN DEBAJO DEL TÍTULO ========== */}
               <div className="mb-8 mt-4 flex justify-center">
-                <Image 
+                <NextImage 
                   src="/baseman.png"
                   alt="Hero Logo" 
                   width={160}
