@@ -1,11 +1,6 @@
-import { Metadata } from 'next';
+import { BlueSkyBirdGame } from '@/components/BlueSkyBirdGame';
 
-export const metadata: Metadata = {
-  other: {
-    'base:app_id': '6993d0127ca07f5750bbdc46',
-  },
-};
 
 export default function Home() {
-  return (<div>{/* Your page content */}</div>);
+  return <BlueSkyBirdGame />;
 }
