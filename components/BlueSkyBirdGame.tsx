@@ -509,7 +509,7 @@ export function BlueSkyBirdGame() {
 
           {!gameStarted && !isStarting && !isConfirmingStart && countdown === null && (
             <div className="absolute inset-0 bg-blue-950/80 backdrop-blur-md flex flex-col items-center justify-center">
-              <h1 className="text-5xl font-bold text-cyan-400 mb-4 drop-shadow-[0_0_20px_rgba(0,255,255,0.8)]">
+              <h1 className="text-5xl font-bold text-cyan-400 mb-4 mt-16 drop-shadow-[0_0_20px_rgba(0,255,255,0.8)]">
                 Baseman
               </h1>
               
