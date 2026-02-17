@@ -448,9 +448,19 @@ export function BlueSkyBirdGame() {
         }}
       >
         <div className="bg-blue-900/80 backdrop-blur-lg rounded-xl p-8 max-w-md w-full text-center shadow-2xl border border-cyan-500/30">
-          <h1 className="text-4xl font-bold text-cyan-400 mb-4 drop-shadow-[0_0_10px_rgba(0,255,255,0.5)]">
-            Blue Sky Hero
+          <h1 className="text-4xl font-bold text-cyan-400 mb-4 mt-8 drop-shadow-[0_0_10px_rgba(0,255,255,0.5)]">
+            Baseman
           </h1>
+                <div className="mb-8 mt-4 flex justify-center">
+                <NextImage 
+                  src="/baseman.png"
+                  alt="Hero Logo" 
+                  width={160}
+                  height={160}
+                  className="rounded-full border-4 border-cyan-400 shadow-2xl shadow-cyan-400/80 object-cover animate-pulse"
+                  priority
+                />
+              </div>
           <p className="text-cyan-200 mb-6">
             Connect your wallet to play on Base!
           </p>
@@ -500,7 +510,7 @@ export function BlueSkyBirdGame() {
           {!gameStarted && !isStarting && !isConfirmingStart && countdown === null && (
             <div className="absolute inset-0 bg-blue-950/80 backdrop-blur-md flex flex-col items-center justify-center">
               <h1 className="text-5xl font-bold text-cyan-400 mb-4 drop-shadow-[0_0_20px_rgba(0,255,255,0.8)]">
-                Blue Sky Hero
+                Baseman
               </h1>
               
               {/* ========== IMAGEN DEBAJO DEL TÍTULO ========== */}
