@@ -18,11 +18,6 @@ export function RootProvider({ children }: { children: ReactNode }) {
           display: "modal",
         },
       }}
-      miniKit={{
-        enabled: true,
-        autoConnect: true,
-        notificationProxyUrl: undefined,
-      }}
     >
       {children}
     </OnchainKitProvider>
