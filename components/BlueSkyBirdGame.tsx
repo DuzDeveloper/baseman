@@ -8,14 +8,22 @@ import NextImage from 'next/image';
 
 const GAME_CONTRACT = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`;
 
+const DATA_SUFFIX = (() => {
+  const code = 'bc_xvivltyi';
+  const codeHex = Array.from(new TextEncoder().encode(code))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+  return `0x07626173656170700${codeHex}80218021802180218021802180218021` as `0x${string}`;
+})();
+
 // ========== CONFIGURACIÓN EDITABLE ==========
 const CONFIG = {
   skyColor: '#87CEEB',
   birdColor: '#0066FF',
   pipeColor: '#0047AB',
   groundColor: '#4169E1',
-  gravity: 0.18,              // ← REDUCIDO a la mitad (de 0.35 a 0.18)
-  jumpStrength: -6,           // ← AJUSTADO para compensar (de -8 a -6)
+  gravity: 0.18,
+  jumpStrength: -6,
   birdSize: 50,
   pipeWidth: 80,
   pipeGap: 220,
@@ -25,15 +33,13 @@ const CONFIG = {
 interface Pipe {
   x: number;
   height: number;
-  scored?: boolean;  // ← NUEVO: flag para marcar si ya se contó
+  scored?: boolean;
 }
 
-// ========== SUPERHÉROE ESTILO ROBOT/ARMADURA AZUL (como la foto) ==========
 function drawBird(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, color: string) {
   const s = size / 14;
   
-  // ====== CAPA AZUL/MORADA (atrás) ======
-  ctx.fillStyle = '#7C3AED'; // Morado/púrpura
+  ctx.fillStyle = '#7C3AED';
   ctx.beginPath();
   ctx.moveTo(x + s * 3, y + s * 4);
   ctx.quadraticCurveTo(x - s * 3, y + s * 2, x - s * 2, y + s * 4);
@@ -42,33 +48,27 @@ function drawBird(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
   ctx.closePath();
   ctx.fill();
   
-  // ====== BRAZO IZQUIERDO EXTENDIDO (armadura gris/azul) ======
-  // Hombro
-  ctx.fillStyle = '#475569'; // Gris metálico
+  ctx.fillStyle = '#475569';
   ctx.beginPath();
   ctx.ellipse(x + s * 8.5, y + s * 5, s * 1.2, s * 1.2, 0, 0, Math.PI * 2);
   ctx.fill();
   
-  // Brazo
   ctx.fillStyle = '#64748B';
   ctx.beginPath();
   ctx.ellipse(x + s * 10.5, y + s * 5.5, s * 2.2, s * 0.9, -0.2, 0, Math.PI * 2);
   ctx.fill();
   
-  // Puño/guante
   ctx.fillStyle = '#475569';
   ctx.beginPath();
   ctx.ellipse(x + s * 13, y + s * 5, s * 1, s * 0.8, -0.3, 0, Math.PI * 2);
   ctx.fill();
   
-  // ====== TORSO (armadura azul) ======
-  ctx.fillStyle = color; // Azul
+  ctx.fillStyle = color;
   ctx.beginPath();
   ctx.ellipse(x + s * 6, y + s * 6.5, s * 2.8, s * 2, 0, 0, Math.PI * 2);
   ctx.fill();
   
-  // Detalles del pecho (líneas de armadura)
-  ctx.strokeStyle = '#0EA5E9'; // Azul claro
+  ctx.strokeStyle = '#0EA5E9';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.moveTo(x + s * 5, y + s * 6);
@@ -77,55 +77,44 @@ function drawBird(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
   ctx.lineTo(x + s * 7, y + s * 7);
   ctx.stroke();
   
-  // ====== REACTOR ARC / SÍMBOLO EN EL PECHO ======
-  // Círculo exterior
   ctx.strokeStyle = '#0EA5E9';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(x + s * 6, y + s * 6.5, s * 1.2, 0, Math.PI * 2);
   ctx.stroke();
   
-  // Centro brillante
-  ctx.fillStyle = '#06B6D4'; // Cyan brillante
+  ctx.fillStyle = '#06B6D4';
   ctx.beginPath();
   ctx.arc(x + s * 6, y + s * 6.5, s * 0.8, 0, Math.PI * 2);
   ctx.fill();
   
-  // Glow interno
   ctx.fillStyle = '#FFFFFF';
   ctx.beginPath();
   ctx.arc(x + s * 6, y + s * 6.5, s * 0.4, 0, Math.PI * 2);
   ctx.fill();
   
-  // ====== CABEZA/CASCO ======
-  // Casco base (gris metálico)
   ctx.fillStyle = '#64748B';
   ctx.beginPath();
   ctx.arc(x + s * 9, y + s * 4.5, s * 2, 0, Math.PI * 2);
   ctx.fill();
   
-  // Parte superior del casco (más oscura)
   ctx.fillStyle = '#475569';
   ctx.beginPath();
   ctx.arc(x + s * 9, y + s * 3.8, s * 2, Math.PI, Math.PI * 2);
   ctx.fill();
   
-  // VISOR (cyan brillante)
   ctx.fillStyle = '#06B6D4';
   ctx.fillRect(x + s * 7.5, y + s * 4.2, s * 3, s * 1);
   
-  // Brillo del visor
   ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
   ctx.fillRect(x + s * 7.8, y + s * 4.3, s * 2, s * 0.4);
   
-  // Detalle de antena/sensor
   ctx.fillStyle = '#94A3B8';
   ctx.fillRect(x + s * 8.8, y + s * 3, s * 0.4, s * 0.8);
   ctx.beginPath();
   ctx.arc(x + s * 9, y + s * 3, s * 0.3, 0, Math.PI * 2);
   ctx.fill();
   
-  // ====== BRAZO DERECHO (atrás, pegado al cuerpo) ======
   ctx.fillStyle = '#64748B';
   ctx.beginPath();
   ctx.ellipse(x + s * 4.5, y + s * 7, s * 1.8, s * 0.8, 0.3, 0, Math.PI * 2);
@@ -136,49 +125,40 @@ function drawBird(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
   ctx.arc(x + s * 3, y + s * 7.5, s * 0.8, 0, Math.PI * 2);
   ctx.fill();
   
-  // ====== CINTURÓN (gris oscuro) ======
   ctx.fillStyle = '#334155';
   ctx.fillRect(x + s * 4.5, y + s * 8, s * 3, s * 0.6);
   
-  // Hebilla
   ctx.fillStyle = '#64748B';
   ctx.beginPath();
   ctx.arc(x + s * 6, y + s * 8.3, s * 0.5, 0, Math.PI * 2);
   ctx.fill();
   
-  // ====== PIERNAS EXTENDIDAS (armadura azul) ======
-  // Pierna superior
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.ellipse(x + s * 3, y + s * 6.5, s * 2.2, s * 1, -0.1, 0, Math.PI * 2);
   ctx.fill();
   
-  // Rodillera
   ctx.fillStyle = '#475569';
   ctx.beginPath();
   ctx.arc(x + s * 1.5, y + s * 6.5, s * 0.6, 0, Math.PI * 2);
   ctx.fill();
   
-  // Pierna inferior
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.ellipse(x + s * 3, y + s * 8, s * 2.2, s * 1, 0.1, 0, Math.PI * 2);
   ctx.fill();
   
-  // Rodillera inferior
   ctx.fillStyle = '#475569';
   ctx.beginPath();
   ctx.arc(x + s * 1.5, y + s * 8, s * 0.6, 0, Math.PI * 2);
   ctx.fill();
   
-  // ====== BOTAS AZULES ======
-  ctx.fillStyle = '#1E40AF'; // Azul oscuro para botas
+  ctx.fillStyle = '#1E40AF';
   ctx.beginPath();
   ctx.ellipse(x + s * 1.3, y + s * 6.2, s * 1, s * 0.7, -0.2, 0, Math.PI * 2);
   ctx.ellipse(x + s * 1.3, y + s * 8.2, s * 1, s * 0.7, 0.2, 0, Math.PI * 2);
   ctx.fill();
   
-  // Detalles de botas (línea brillante)
   ctx.strokeStyle = '#3B82F6';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -188,13 +168,11 @@ function drawBird(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
   ctx.lineTo(x + s * 1.8, y + s * 8.4);
   ctx.stroke();
   
-  // ====== HOMBRERA/PROTECCIÓN DE HOMBRO ======
-  ctx.fillStyle = '#7C3AED'; // Morado (igual que la capa)
+  ctx.fillStyle = '#7C3AED';
   ctx.beginPath();
   ctx.ellipse(x + s * 8, y + s * 4.5, s * 1.5, s * 0.8, -0.3, 0, Math.PI * 2);
   ctx.fill();
   
-  // ====== LÍNEAS DE VELOCIDAD ======
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -272,6 +250,7 @@ export function BlueSkyBirdGame() {
       address: GAME_CONTRACT,
       abi: GAME_ABI,
       functionName: 'startGame',
+      dataSuffix: DATA_SUFFIX,
     });
   };
 
@@ -313,6 +292,7 @@ export function BlueSkyBirdGame() {
       abi: GAME_ABI,
       functionName: 'endGame',
       args: [BigInt(score)],
+      dataSuffix: DATA_SUFFIX,
     });
   }, [address, isEnding, gameOver, score, endGameTx]);
 
@@ -344,13 +324,11 @@ export function BlueSkyBirdGame() {
         .filter(pipe => pipe.x > -CONFIG.pipeWidth)
       );
 
-      // Contar score - SOLO UNA VEZ por tubería
       setPipes(prev => {
         return prev.map(pipe => {
-          // Si el superhéroe pasó la tubería y aún no se ha contado
           if (!pipe.scored && pipe.x + CONFIG.pipeWidth < 100) {
             setScore(s => s + 1);
-            return { ...pipe, scored: true }; // Marcar como contada
+            return { ...pipe, scored: true };
           }
           return pipe;
         });
@@ -451,16 +429,16 @@ export function BlueSkyBirdGame() {
           <h1 className="text-4xl font-bold text-cyan-400 mb-4 mt-8 drop-shadow-[0_0_10px_rgba(0,255,255,0.5)]">
             Baseman
           </h1>
-                <div className="mb-8 mt-4 flex justify-center">
-                <NextImage 
-                  src="/baseman.png"
-                  alt="Hero Logo" 
-                  width={160}
-                  height={160}
-                  className="rounded-full border-4 border-cyan-400 shadow-2xl shadow-cyan-400/80 object-cover animate-pulse"
-                  priority
-                />
-              </div>
+          <div className="mb-8 mt-4 flex justify-center">
+            <NextImage 
+              src="/baseman.png"
+              alt="Hero Logo" 
+              width={160}
+              height={160}
+              className="rounded-full border-4 border-cyan-400 shadow-2xl shadow-cyan-400/80 object-cover animate-pulse"
+              priority
+            />
+          </div>
           <p className="text-cyan-200 mb-6">
             Connect your wallet to play on Base!
           </p>
@@ -512,8 +490,6 @@ export function BlueSkyBirdGame() {
               <h1 className="text-5xl font-bold text-cyan-400 mb-4 mt-16 drop-shadow-[0_0_20px_rgba(0,255,255,0.8)]">
                 Baseman
               </h1>
-              
-              {/* ========== IMAGEN DEBAJO DEL TÍTULO ========== */}
               <div className="mb-8 mt-4 flex justify-center">
                 <NextImage 
                   src="/baseman.png"
@@ -524,8 +500,6 @@ export function BlueSkyBirdGame() {
                   priority
                 />
               </div>
-              {/* ========== FIN IMAGEN ========== */}
-              
               <p className="text-xl text-cyan-300 mb-8">⛓️ On-Chain Game</p>
               <button
                 onClick={(e) => { 
