@@ -2,6 +2,11 @@ import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
 import { base } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
+import { Attribution } from 'ox/erc8021';
+
+const DATA_SUFFIX = Attribution.toDataSuffix({
+  codes: ['bc_xvivltyi'], // ej: 'bc_b7k3p9da'
+});
 
 export function getConfig() {
   return createConfig({
@@ -17,11 +22,11 @@ export function getConfig() {
       storage: cookieStorage,
     }),
     ssr: true,
-    // CRÍTICO: Deshabilitar auto-connect para evitar el loop
     multiInjectedProviderDiscovery: false,
     transports: {
       [base.id]: http(),
     },
+    dataSuffix: DATA_SUFFIX, 
   });
 }
 
