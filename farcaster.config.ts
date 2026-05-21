@@ -11,7 +11,7 @@ export const farcasterConfig = {
     version: "1",
     subtitle: "Save the Basecity of the crime",
     description: "A game inspired on FlappyBirds",
-    screenshotUrls: ["https://baseman-eta.vercel.app/images/scr1.png"],
+    screenshotUrls: ["https://baseman-eta.vercel.app/images/scr1.png","https://baseman-eta.vercel.app/images/scr2.png","https://baseman-eta.vercel.app/images/scr3.png"],
     name: "Baseman",
     iconUrl: `https://baseman-eta.vercel.app/images/icon.png`,
     splashImageUrl: `https://baseman-eta.vercel.app/images/splash.png`,
