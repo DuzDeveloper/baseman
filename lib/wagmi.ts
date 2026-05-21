@@ -2,10 +2,10 @@ import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
 import { base } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
-import { Attribution } from 'ox/erc8021';
+import { Erc8021 } from 'ox';
 
-const DATA_SUFFIX = Attribution.toDataSuffix({
-  codes: ['bc_xvivltyi'], // ej: 'bc_b7k3p9da'
+const DATA_SUFFIX = Erc8021.Attribution.toDataSuffix({
+  codes: ['bc_xvivltyi'],
 });
 
 export function getConfig() {
