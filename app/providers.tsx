@@ -1,20 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, type Config } from "wagmi";
 import { getConfig } from "@/lib/wagmi";
 import { RootProvider } from "./rootProvider";
 import sdk from "@farcaster/miniapp-sdk";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const [config] = useState<any>(() => getConfig());
+  const [config] = useState<Config>(() => getConfig());
   const [queryClient] = useState(() => new QueryClient());
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Llamar ready() APENAS se monta el componente
     const signalReady = async () => {
       try {
         await sdk.actions.ready({});
@@ -25,7 +23,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         setIsReady(true);
       }
     };
-
     signalReady();
   }, []);
 
