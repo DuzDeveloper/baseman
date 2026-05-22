@@ -170,7 +170,6 @@ export function BlueSkyBirdGame() {
   const gameLoopRef = useRef<number | undefined>(undefined);
   const lastPipeRef = useRef<number>(0);
 
-  // Detectar si es Smart Wallet (Coinbase/Base App)
   const isSmartWallet = connector?.id === 'coinbaseWalletSDK';
 
   useEffect(() => {
@@ -196,13 +195,13 @@ export function BlueSkyBirdGame() {
   // Smart Wallet (Base App) hooks
   const { data: startCallsId, sendCalls: sendStartCalls, isPending: isStartingSW } = useSendCalls();
   const { data: endCallsId, sendCalls: sendEndCalls, isPending: isEndingSW } = useSendCalls();
-  const { data: startCallsStatus } = useCallsStatus({ id: (startCallsId as unknown) as string, query: { enabled: !!startCallsId, refetchInterval: (data) => data?.status === 'CONFIRMED' ? false : 1000 } });
-  const { data: endCallsStatus } = useCallsStatus({ id: (endCallsId as unknown) as string, query: { enabled: !!endCallsId, refetchInterval: (data) => data?.status === 'CONFIRMED' ? false : 1000 } });
+  const { data: startCallsStatus } = useCallsStatus({ id: (startCallsId as unknown) as string, query: { enabled: !!startCallsId, refetchInterval: (data) => data?.statusCode === 200 ? false : 1000 } });
+  const { data: endCallsStatus } = useCallsStatus({ id: (endCallsId as unknown) as string, query: { enabled: !!endCallsId, refetchInterval: (data) => data?.statusCode === 200 ? false : 1000 } });
 
   const isStarting = isSmartWallet ? isStartingSW : isStartingEOA;
   const isEnding = isSmartWallet ? isEndingSW : isEndingEOA;
-  const startSuccess = isSmartWallet ? startCallsStatus?.status === 'CONFIRMED' : startConfirmed;
-  const endSuccess = isSmartWallet ? endCallsStatus?.status === 'CONFIRMED' : endConfirmed;
+  const startSuccess = isSmartWallet ? startCallsStatus?.statusCode === 200 : startConfirmed;
+  const endSuccess = isSmartWallet ? endCallsStatus?.statusCode === 200 : endConfirmed;
 
   const handleStartGame = () => {
     if (!address || !GAME_CONTRACT) return;
