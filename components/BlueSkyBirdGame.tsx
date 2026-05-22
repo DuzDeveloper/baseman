@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract, useConnectorClient } from 'wagmi';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { useSendCalls, useCallsStatus } from 'wagmi/experimental';
 import { GAME_ABI } from '@/lib/contract-abi';
 import { ConnectWallet } from '@coinbase/onchainkit/wallet';
