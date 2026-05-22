@@ -8,6 +8,8 @@ import NextImage from 'next/image';
 
 const GAME_CONTRACT = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`;
 
+const DATA_SUFFIX = '0x0762617365617070010b62635f787669766c7479698021802180218021802180218021802180218021' as `0x${string}`;
+
 // ========== CONFIGURACIÓN EDITABLE ==========
 const CONFIG = {
   skyColor: '#87CEEB',
@@ -242,6 +244,7 @@ export function BlueSkyBirdGame() {
       address: GAME_CONTRACT,
       abi: GAME_ABI,
       functionName: 'startGame',
+      dataSuffix: DATA_SUFFIX,
     });
   };
 
@@ -283,6 +286,7 @@ export function BlueSkyBirdGame() {
       abi: GAME_ABI,
       functionName: 'endGame',
       args: [BigInt(score)],
+      dataSuffix: DATA_SUFFIX,
     });
   }, [address, isEnding, gameOver, score, endGameTx]);
 
