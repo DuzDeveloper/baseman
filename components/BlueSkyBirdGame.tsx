@@ -196,8 +196,8 @@ export function BlueSkyBirdGame() {
   // Smart Wallet (Base App) hooks
   const { data: startCallsId, sendCalls: sendStartCalls, isPending: isStartingSW } = useSendCalls();
   const { data: endCallsId, sendCalls: sendEndCalls, isPending: isEndingSW } = useSendCalls();
-  const { data: startCallsStatus } = useCallsStatus({ id: startCallsId as string, query: { enabled: !!startCallsId, refetchInterval: (data) => data?.status === 'CONFIRMED' ? false : 1000 } });
-  const { data: endCallsStatus } = useCallsStatus({ id: endCallsId as string, query: { enabled: !!endCallsId, refetchInterval: (data) => data?.status === 'CONFIRMED' ? false : 1000 } });
+  const { data: startCallsStatus } = useCallsStatus({ id: (startCallsId as unknown) as string, query: { enabled: !!startCallsId, refetchInterval: (data) => data?.status === 'CONFIRMED' ? false : 1000 } });
+  const { data: endCallsStatus } = useCallsStatus({ id: (endCallsId as unknown) as string, query: { enabled: !!endCallsId, refetchInterval: (data) => data?.status === 'CONFIRMED' ? false : 1000 } });
 
   const isStarting = isSmartWallet ? isStartingSW : isStartingEOA;
   const isEnding = isSmartWallet ? isEndingSW : isEndingEOA;
