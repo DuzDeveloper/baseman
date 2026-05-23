@@ -1,5 +1,4 @@
 "use client";
-
 import { ReactNode } from "react";
 import { base } from "wagmi/chains";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
@@ -17,6 +16,10 @@ export function RootProvider({ children }: { children: ReactNode }) {
         wallet: {
           display: "modal",
         },
+      }}
+      miniKit={{
+        enabled: true,
+        autoConnect: true,
       }}
     >
       {children}
