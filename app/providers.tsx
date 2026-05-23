@@ -13,7 +13,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Timeout de seguridad: si sdk.actions.ready() no responde en 3s, continuamos igual
     const timeout = setTimeout(() => {
       setIsReady(true);
     }, 3000);
@@ -23,7 +22,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         await sdk.actions.ready({});
         console.log("✅ SDK ready() called successfully");
       } catch (error) {
-        console.log("⚠️ Not in mini app context (this is OK in browser):", error);
+        console.log("⚠️ Not in mini app context:", error);
       } finally {
         clearTimeout(timeout);
         setIsReady(true);
@@ -31,7 +30,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     };
 
     signalReady();
-
     return () => clearTimeout(timeout);
   }, []);
 
@@ -50,7 +48,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <WagmiProvider config={config as any}>
+    <WagmiProvider config={config as any} reconnectOnMount={true}>
       <QueryClientProvider client={queryClient}>
         <RootProvider>
           {children}
