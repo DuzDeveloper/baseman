@@ -1,43 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { WagmiProvider } from "wagmi";
+import { AutoConnect } from "@coinbase/onchainkit/minikit";
 import { getConfig } from "@/lib/wagmi";
 import { RootProvider } from "./rootProvider";
-import sdk from "@farcaster/miniapp-sdk";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [config] = useState(() => getConfig());
   const [queryClient] = useState(() => new QueryClient());
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    // Llamar ready() sin await ni context - directo
-    sdk.actions.ready({}).catch(() => {});
-    // Mostrar la app inmediatamente
-    setIsReady(true);
-  }, []);
-
-  if (!isReady) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        height: '100vh',
-        background: 'linear-gradient(to bottom, #1e3a8a, #1e40af)'
-      }}>
-        <div style={{ color: 'white', fontSize: '18px' }}>Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <WagmiProvider config={config as any} reconnectOnMount={true}>
       <QueryClientProvider client={queryClient}>
         <RootProvider>
-          {children}
+          <AutoConnect>
+            {children}
+          </AutoConnect>
         </RootProvider>
       </QueryClientProvider>
     </WagmiProvider>
