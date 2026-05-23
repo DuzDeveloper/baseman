@@ -2,7 +2,6 @@ import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
 import { base } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
-
 // Builder Code suffix calculado manualmente (ERC-8021)
 // Formato: 0x + "baseapp" en hex + código en hex + 8021 repetido 8 veces
 function toDataSuffix(builderCode: string): `0x${string}` {
@@ -11,9 +10,7 @@ function toDataSuffix(builderCode: string): `0x${string}` {
   const suffix = '8021'.repeat(8);
   return `0x${prefix}0${codeHex}${suffix}` as `0x${string}`;
 }
-
 const DATA_SUFFIX = toDataSuffix('bc_xvivltyi'); // Tu Builder Code
-
 export function getConfig() {
   return createConfig({
     chains: [base],
@@ -35,7 +32,6 @@ export function getConfig() {
     dataSuffix: DATA_SUFFIX,
   });
 }
-
 declare module 'wagmi' {
   interface Register {
     config: ReturnType<typeof getConfig>;
