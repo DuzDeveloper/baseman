@@ -3,7 +3,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { WagmiProvider } from "wagmi";
-import { AutoConnect } from "@coinbase/onchainkit/minikit";
 import { getConfig } from "@/lib/wagmi";
 import { RootProvider } from "./rootProvider";
 
@@ -15,9 +14,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <WagmiProvider config={config as any} reconnectOnMount={true}>
       <QueryClientProvider client={queryClient}>
         <RootProvider>
-          <AutoConnect>
-            {children}
-          </AutoConnect>
+          {children}
         </RootProvider>
       </QueryClientProvider>
     </WagmiProvider>
