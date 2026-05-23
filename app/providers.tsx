@@ -30,16 +30,18 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       setIsReady(true);
     }, 3000);
 
-    const signalReady = async () => {
-      try {
-        await sdk.actions.ready({});
-      } catch (error) {
-        console.log("⚠️ Not in mini app context:", error);
-      } finally {
-        clearTimeout(timeout);
-        setIsReady(true);
-      }
-    };
+const signalReady = async () => {
+  try {
+    const context = await sdk.context;
+    console.log("SDK context:", JSON.stringify(context));
+    await sdk.actions.ready({});
+  } catch (error) {
+    console.log("⚠️ Error:", error);
+  } finally {
+    clearTimeout(timeout);
+    setIsReady(true);
+  }
+};
 
     signalReady();
     return () => clearTimeout(timeout);
