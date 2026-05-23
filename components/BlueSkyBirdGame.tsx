@@ -8,7 +8,7 @@ import NextImage from 'next/image';
 
 const GAME_CONTRACT = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`;
 
-const DATA_SUFFIX = '0x62635f787669766c7479690b0080218021802180218021802180218021' as `0x${string}`;
+const DATA_SUFFIX = '0x0762617365617070010b62635f787669766c7479698021802180218021802180218021802180218021' as `0x${string}`;
 
 const CONFIG = {
   skyColor: '#87CEEB',
@@ -327,6 +327,7 @@ export function BlueSkyBirdGame() {
     drawBird(ctx, 100, bird.y, CONFIG.birdSize, CONFIG.birdColor);
   }, [bird, pipes]);
 
+  // Pantalla de conexión - spinner simple mientras auto-conecta
   if (!isConnected) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4"
@@ -337,7 +338,9 @@ export function BlueSkyBirdGame() {
             <NextImage src="/baseman.png" alt="Hero Logo" width={160} height={160}
               className="rounded-full border-4 border-cyan-400 shadow-2xl shadow-cyan-400/80 object-cover animate-pulse" priority />
           </div>
-          <p className="text-cyan-200 mb-6">Connect your wallet to play on Base!</p>
+          <p className="text-cyan-200 mb-6">Connecting wallet...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-4 border-cyan-400 border-t-transparent mx-auto mb-6"></div>
+          {/* Fallback para browser normal */}
           <ConnectWallet className="w-full" />
         </div>
       </div>
