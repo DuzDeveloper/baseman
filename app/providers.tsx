@@ -13,6 +13,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    // Timeout de seguridad: si sdk.actions.ready() no responde en 3s, continuamos igual
+    const timeout = setTimeout(() => {
+      setIsReady(true);
+    }, 3000);
+
     const signalReady = async () => {
       try {
         await sdk.actions.ready({});
@@ -20,10 +25,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.log("⚠️ Not in mini app context (this is OK in browser):", error);
       } finally {
+        clearTimeout(timeout);
         setIsReady(true);
       }
     };
+
     signalReady();
+
+    return () => clearTimeout(timeout);
   }, []);
 
   if (!isReady) {
