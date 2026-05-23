@@ -2,10 +2,23 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, useConnect } from "wagmi";
 import { getConfig } from "@/lib/wagmi";
 import { RootProvider } from "./rootProvider";
 import sdk from "@farcaster/miniapp-sdk";
+
+function AutoConnect() {
+  const { connect, connectors } = useConnect();
+
+  useEffect(() => {
+    const farcasterConnector = connectors.find(c => c.id === 'farcasterMiniApp');
+    if (farcasterConnector) {
+      connect({ connector: farcasterConnector });
+    }
+  }, [connect, connectors]);
+
+  return null;
+}
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [config] = useState(() => getConfig());
@@ -20,7 +33,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     const signalReady = async () => {
       try {
         await sdk.actions.ready({});
-        console.log("✅ SDK ready() called successfully");
       } catch (error) {
         console.log("⚠️ Not in mini app context:", error);
       } finally {
@@ -50,6 +62,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config as any} reconnectOnMount={true}>
       <QueryClientProvider client={queryClient}>
+        <AutoConnect />
         <RootProvider>
           {children}
         </RootProvider>
