@@ -168,7 +168,7 @@ export function BlueSkyBirdGame() {
   const gameLoopRef = useRef<number | undefined>(undefined);
   const lastPipeRef = useRef<number>(0);
 
-  // Auto-conectar con farcasterMiniApp si está disponible
+  // Auto-connect farcasterMiniApp
   useEffect(() => {
     if (!isConnected) {
       const farcasterConnector = connectors.find(c => c.id === 'farcasterMiniApp');
@@ -327,20 +327,17 @@ export function BlueSkyBirdGame() {
     drawBird(ctx, 100, bird.y, CONFIG.birdSize, CONFIG.birdColor);
   }, [bird, pipes]);
 
-  // Pantalla de conexión - spinner simple mientras auto-conecta
   if (!isConnected) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4"
         style={{ backgroundImage: 'url(/fondo.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="bg-blue-900/80 backdrop-blur-lg rounded-xl p-8 max-w-md w-full text-center shadow-2xl border border-cyan-500/30">
-          <h1 className="text-4xl font-bold text-cyan-400 mb-4 mt-8 drop-shadow-[0_0_10px_rgba(0,255,255,0.5)]">Baseman</h1>
+          <h1 className="text-4xl font-bold text-cyan-400 mb-4 mt-8">Baseman</h1>
           <div className="mb-8 mt-4 flex justify-center">
             <NextImage src="/baseman.png" alt="Hero Logo" width={160} height={160}
               className="rounded-full border-4 border-cyan-400 shadow-2xl shadow-cyan-400/80 object-cover animate-pulse" priority />
           </div>
-          <p className="text-cyan-200 mb-6">Connecting wallet...</p>
-          <div className="animate-spin rounded-full h-8 w-8 border-4 border-cyan-400 border-t-transparent mx-auto mb-6"></div>
-          {/* Fallback para browser normal */}
+          <p className="text-cyan-200 mb-6">Connect your wallet to play on Base!</p>
           <ConnectWallet className="w-full" />
         </div>
       </div>
