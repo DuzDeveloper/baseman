@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract, useConnect } from 'wagmi';
 import { GAME_ABI } from '@/lib/contract-abi';
 import { ConnectWallet } from '@coinbase/onchainkit/wallet';
 import NextImage from 'next/image';
@@ -10,7 +10,6 @@ const GAME_CONTRACT = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${strin
 
 const DATA_SUFFIX = '0x62635f787669766c7479690b0080218021802180218021802180218021' as `0x${string}`;
 
-// ========== CONFIGURACIÓN EDITABLE ==========
 const CONFIG = {
   skyColor: '#87CEEB',
   birdColor: '#0066FF',
@@ -155,6 +154,7 @@ function drawBird(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
 
 export function BlueSkyBirdGame() {
   const { address, isConnected } = useAccount();
+  const { connect, connectors } = useConnect();
   const [gameStarted, setGameStarted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
@@ -167,6 +167,16 @@ export function BlueSkyBirdGame() {
   const backgroundRef = useRef<HTMLImageElement | null>(null);
   const gameLoopRef = useRef<number | undefined>(undefined);
   const lastPipeRef = useRef<number>(0);
+
+  // Auto-conectar con farcasterMiniApp si está disponible
+  useEffect(() => {
+    if (!isConnected) {
+      const farcasterConnector = connectors.find(c => c.id === 'farcasterMiniApp');
+      if (farcasterConnector) {
+        connect({ connector: farcasterConnector });
+      }
+    }
+  }, [isConnected, connect, connectors]);
 
   useEffect(() => {
     const img = new Image();
