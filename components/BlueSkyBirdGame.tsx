@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
-import { useSendCalls, useCallsStatus } from 'wagmi/experimental';
 import { GAME_ABI } from '@/lib/contract-abi';
 import { ConnectWallet } from '@coinbase/onchainkit/wallet';
 import NextImage from 'next/image';
-import { encodeFunctionData } from 'viem';
 
 const GAME_CONTRACT = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`;
 
@@ -156,7 +154,7 @@ function drawBird(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
 }
 
 export function BlueSkyBirdGame() {
-  const { address, isConnected, connector } = useAccount();
+  const { address, isConnected } = useAccount();
   const [gameStarted, setGameStarted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
@@ -169,8 +167,6 @@ export function BlueSkyBirdGame() {
   const backgroundRef = useRef<HTMLImageElement | null>(null);
   const gameLoopRef = useRef<number | undefined>(undefined);
   const lastPipeRef = useRef<number>(0);
-
-  const isSmartWallet = connector?.id === 'coinbaseWalletSDK';
 
   useEffect(() => {
     const img = new Image();
@@ -186,58 +182,28 @@ export function BlueSkyBirdGame() {
     query: { enabled: !!address && !!GAME_CONTRACT },
   });
 
-  // EOA (MetaMask) hooks
-  const { data: startHash, writeContract: startGameTx, isPending: isStartingEOA } = useWriteContract();
+  const { data: startHash, writeContract: startGameTx, isPending: isStarting } = useWriteContract();
   const { isLoading: isConfirmingStart, isSuccess: startConfirmed } = useWaitForTransactionReceipt({ hash: startHash });
-  const { data: endHash, writeContract: endGameTx, isPending: isEndingEOA } = useWriteContract();
+  const { data: endHash, writeContract: endGameTx, isPending: isEnding } = useWriteContract();
   const { isSuccess: endConfirmed } = useWaitForTransactionReceipt({ hash: endHash });
-
-  // Smart Wallet (Base App) hooks
-  const { data: startCallsId, sendCalls: sendStartCalls, isPending: isStartingSW } = useSendCalls();
-  const { data: endCallsId, sendCalls: sendEndCalls, isPending: isEndingSW } = useSendCalls();
-  const { data: startCallsStatus } = useCallsStatus({ id: (startCallsId as unknown) as string, query: { enabled: !!startCallsId, refetchInterval: 1000 } });
-  const { data: endCallsStatus } = useCallsStatus({ id: (endCallsId as unknown) as string, query: { enabled: !!endCallsId, refetchInterval: 1000 } });
-
-  const isStarting = isSmartWallet ? isStartingSW : isStartingEOA;
-  const isEnding = isSmartWallet ? isEndingSW : isEndingEOA;
-  const startSuccess = isSmartWallet ? startCallsStatus?.statusCode === 200 : startConfirmed;
-  const endSuccess = isSmartWallet ? endCallsStatus?.statusCode === 200 : endConfirmed;
 
   const handleStartGame = () => {
     if (!address || !GAME_CONTRACT) return;
     setCountdownStarted(false);
-
-    if (isSmartWallet) {
-      sendStartCalls({
-        calls: [
-          {
-            to: GAME_CONTRACT,
-            data: encodeFunctionData({ abi: GAME_ABI, functionName: 'startGame' }),
-          },
-        ],
-        capabilities: {
-          dataSuffix: {
-            value: DATA_SUFFIX,
-            optional: true,
-          },
-        },
-      });
-    } else {
-      startGameTx({
-        address: GAME_CONTRACT,
-        abi: GAME_ABI,
-        functionName: 'startGame',
-        dataSuffix: DATA_SUFFIX,
-      });
-    }
+    startGameTx({
+      address: GAME_CONTRACT,
+      abi: GAME_ABI,
+      functionName: 'startGame',
+      dataSuffix: DATA_SUFFIX,
+    });
   };
 
   useEffect(() => {
-    if (startSuccess && !countdownStarted) {
+    if (startConfirmed && !countdownStarted) {
       setCountdownStarted(true);
       setCountdown(3);
     }
-  }, [startSuccess, countdownStarted]);
+  }, [startConfirmed, countdownStarted]);
 
   useEffect(() => {
     if (countdown === null || countdown < 0) return;
@@ -262,32 +228,14 @@ export function BlueSkyBirdGame() {
   const handleGameOver = useCallback(() => {
     if (!address || !GAME_CONTRACT || isEnding || gameOver) return;
     setGameOver(true);
-
-    if (isSmartWallet) {
-      sendEndCalls({
-        calls: [
-          {
-            to: GAME_CONTRACT,
-            data: encodeFunctionData({ abi: GAME_ABI, functionName: 'endGame', args: [BigInt(score)] }),
-          },
-        ],
-        capabilities: {
-          dataSuffix: {
-            value: DATA_SUFFIX,
-            optional: true,
-          },
-        },
-      });
-    } else {
-      endGameTx({
-        address: GAME_CONTRACT,
-        abi: GAME_ABI,
-        functionName: 'endGame',
-        args: [BigInt(score)],
-        dataSuffix: DATA_SUFFIX,
-      });
-    }
-  }, [address, isEnding, gameOver, score, isSmartWallet, sendEndCalls, endGameTx]);
+    endGameTx({
+      address: GAME_CONTRACT,
+      abi: GAME_ABI,
+      functionName: 'endGame',
+      args: [BigInt(score)],
+      dataSuffix: DATA_SUFFIX,
+    });
+  }, [address, isEnding, gameOver, score, endGameTx]);
 
   const jump = useCallback(() => {
     if (!gameStarted || gameOver || countdown !== null) return;
@@ -453,7 +401,7 @@ export function BlueSkyBirdGame() {
                   <p className="text-yellow-300 font-bold mt-2 drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]">🎉 New Record!</p>
                 )}
               </div>
-              {endSuccess ? (
+              {endConfirmed ? (
                 <button onClick={(e) => { e.stopPropagation(); setCountdown(null); setCountdownStarted(false); handleStartGame(); }}
                   className="bg-cyan-500 text-blue-900 font-bold py-3 px-8 rounded-full hover:bg-cyan-400 transition shadow-lg shadow-cyan-500/50">
                   Play Again
