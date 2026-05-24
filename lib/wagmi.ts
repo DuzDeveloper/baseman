@@ -3,14 +3,12 @@ import { base } from 'wagmi/chains';
 import { coinbaseWallet, injected } from 'wagmi/connectors';
 import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
 
-const DATA_SUFFIX = '0x0762617365617070010b62635f787669766c7479698021802180218021802180218021802180218021' as `0x${string}`;
-
 export function getConfig() {
   return createConfig({
     chains: [base],
     connectors: [
       farcasterMiniApp(),
-      injected(), // Para Base App que provee window.ethereum
+      injected(),
       coinbaseWallet({
         appName: process.env.NEXT_PUBLIC_PROJECT_NAME || 'Baseman',
         preference: 'smartWalletOnly',
